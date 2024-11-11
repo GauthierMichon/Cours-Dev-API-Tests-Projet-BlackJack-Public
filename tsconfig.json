@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist", // Dossier de sortie pour les fichiers compilés
+    "rootDir": "./src", // Dossier contenant les fichiers source .ts
+    "target": "es6", // Version cible de JavaScript
+    "module": "commonjs", // Module utilisé (pour Node.js)
+    "strict": true // Activer les vérifications strictes
+  },
+  "include": ["src/**/*.ts"] // Inclure tous les fichiers .ts dans src
+}
