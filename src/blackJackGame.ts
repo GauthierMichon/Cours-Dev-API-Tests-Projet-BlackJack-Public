@@ -8,7 +8,6 @@ export class BlackjackGame {
   player: Player;
   playerBankroll: number;
   playerBet: number;
-  doubledDown: boolean;
 
   constructor(playerName: string, initialBankroll: number) {
     this.deck = new Deck();
@@ -16,7 +15,6 @@ export class BlackjackGame {
     this.player = new Player(playerName);
     this.playerBankroll = initialBankroll;
     this.playerBet = 0;
-    this.doubledDown = false;
   }
 
   startGame(): void {
@@ -39,7 +37,7 @@ export class BlackjackGame {
     } while (
       this.playerBet > this.playerBankroll ||
       isNaN(this.playerBet) ||
-      this.playerBet < 0
+      this.playerBet <= 0
     );
 
     // Déduire la mise de la bankroll
@@ -61,7 +59,7 @@ export class BlackjackGame {
   }
 
   playerTurn(action: string | null = null): void {
-    while (this.player.getHandValue() < 21 && !this.doubledDown) {
+    while (this.player.getHandValue() < 21) {
       // Demander une action valide jusqu'à ce que l'utilisateur entre une action correcte
       while (action !== "hit" && action !== "stand" && action !== "double") {
         console.log("What do you want to do? (hit/stand/double)");
@@ -82,7 +80,7 @@ export class BlackjackGame {
         }
       } else if (action === "double") {
         // Si le joueur veut doubler sa mise
-        if (this.playerBet * 2 > this.playerBankroll) {
+        if (this.playerBet > this.playerBankroll) {
           console.log("Vous ne pouvez pas doubler, bankroll insuffisante.");
           action = null;
         } else {
@@ -110,8 +108,6 @@ export class BlackjackGame {
 
     this.player.addCard(this.deck.drawCard());
     this.player.showHand();
-
-    this.doubledDown = true;
   }
 
   dealerTurn(): void {
@@ -167,16 +163,18 @@ export class BlackjackGame {
       this.checkWinner();
 
       // Demander si le joueur souhaite continuer si sa bankroll le permet
-      const continuePlaying = readlineSync
-        .question("Voulez-vous rejouer ? (yes/no): ")
-        .toLowerCase();
+      if (this.playerBankroll > 0) {
+        const continuePlaying = readlineSync
+          .question("Voulez-vous rejouer ? (yes/no): ")
+          .toLowerCase();
 
-      if (continuePlaying !== "yes") {
-        console.log(
-          "Merci d'avoir joué! Votre bankroll finale est de: " +
-            this.playerBankroll
-        );
-        break;
+        if (continuePlaying !== "yes") {
+          console.log(
+            "Merci d'avoir joué! Votre bankroll finale est de: " +
+              this.playerBankroll
+          );
+          break;
+        }
       }
 
       // Réinitialiser la main pour la prochaine manche
